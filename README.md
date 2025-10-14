@@ -1,55 +1,92 @@
-🎥 YouTube Downloader Interativo (com yt-dlp)
+🎥 YouTube Downloader Interativo (yt-dlp)
 
-Um script em Python para baixar vídeos do YouTube de forma interativa, utilizando a biblioteca yt-dlp
-.
-O diferencial deste projeto é a interface de perguntas dinâmicas:
-o programa exibe o título de cada vídeo, pergunta se o usuário deseja baixar, e permite navegar manualmente por playlists, decidindo vídeo a vídeo o que baixar.
+Script em Python para baixar vídeos do YouTube de forma interativa, um por vez.
+Mesmo quando a URL tem v=...&list=..., o programa força vídeo único (usa noplaylist=True e URL limpa por id) e, se o vídeo pertencer a uma playlist, permite navegar para o próximo título perguntando se você quer baixar.
 
-🚀 Funcionalidades
+✨ Principais recursos
 
-Baixa vídeos únicos ou playlists completas do YouTube
+Mostra o título do vídeo antes de baixar.
 
-Mostra o título do vídeo antes de baixar
+Pergunta: baixar este vídeo? (s/n)
 
-Permite decidir:
+Se o vídeo fizer parte de uma playlist:
 
-Baixar ou não o vídeo atual
+Após cada decisão, mostra o próximo vídeo e pergunta novamente.
 
-Ver o próximo vídeo da playlist
+Navegação vídeo a vídeo (sem “baixar todos”).
 
-Encerrar o programa a qualquer momento
+Evita baixar playlist inteira quando a URL contém &list=....
 
-Detecta automaticamente se a URL é de vídeo ou playlist
+Compatível com Windows, macOS e Linux.
 
-Permite continuar o download a partir do próximo vídeo da lista
+🧠 Como funciona (fluxo)
 
-🧠 Fluxo do Programa
+Solicita uma URL do YouTube (vídeo ou playlist).
 
-O programa solicita a URL do vídeo ou playlist
+Exibe o título do vídeo atual.
 
-Mostra o título do vídeo atual
-
-Pergunta:
-
-Deseja baixar este vídeo?
-
-✅ Sim → baixa o vídeo
-
-❌ Não → pergunta se deseja inserir outra URL
+Pergunta se deseja baixar este vídeo.
 
 Se o vídeo pertencer a uma playlist:
 
-Após o download, mostra o próximo título
+Mostra o próximo título e pergunta novamente se deseja baixar.
 
-Pergunta:
+Você pode seguir para o próximo ou encerrar a qualquer momento.
 
-Deseja baixar este vídeo?
+Ao final, pode inserir outra URL ou sair.
 
-✅ Sim → baixa e mostra o próximo
+O download é sempre individual. Não há opção de “baixar todos”.
 
-❌ Não → pergunta se quer ver o próximo ou encerrar
+⚙️ Instalação
+1) Python
 
-💻 Exemplo de Execução
+Instale o Python 3.8+:
+
+Windows/macOS/Linux: python.org/downloads
+
+2) Dependências
+
+No terminal/prompt:
+
+pip install -r requirements.txt
+
+
+Conteúdo do requirements.txt:
+
+yt-dlp
+
+3) (Opcional, mas recomendado) FFmpeg
+
+Para melhor qualidade e para juntar vídeo+áudio corretamente:
+
+Windows (Winget):
+
+winget install --id Gyan.FFmpeg
+
+
+Windows (Chocolatey):
+
+choco install ffmpeg
+
+
+macOS (Homebrew):
+
+brew install ffmpeg
+
+
+Linux (Debian/Ubuntu):
+
+sudo apt-get update && sudo apt-get install -y ffmpeg
+
+▶️ Uso
+
+Salve o script como DownloadVideo.py e execute:
+
+python DownloadVideo.py
+
+
+Exemplo (vídeo único):
+
 Cole a URL do YouTube (vídeo ou playlist) ou tecle Enter para sair:
 https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
@@ -62,74 +99,68 @@ Deseja inserir outra URL? [s/n]: n
 Encerrando o programa...
 
 
-Ou, no caso de playlist:
+Exemplo (playlist: navegação vídeo a vídeo):
 
 Cole a URL do YouTube (vídeo ou playlist):
-https://www.youtube.com/playlist?list=PL123abcXYZ
+https://www.youtube.com/playlist?list=PL123...
 
 [1/10] Nome do primeiro vídeo
 Deseja fazer o download deste vídeo? [s/n]: s
 Baixando...
 Download concluído!
 
-Deseja verificar o próximo vídeo da lista ou encerrar? [p/e]: p
+Deseja verificar o próximo vídeo da lista? [s/n]: s
 [2/10] Nome do segundo vídeo
 ...
 
-⚙️ Instalação
+🧩 Personalização rápida
 
-Instale o Python 3.8+
-
-Download do Python
-
-Instale o yt-dlp
-
-pip install yt-dlp
-
-
-Baixe o script
-Salve o código em um arquivo chamado youtube_downloader.py.
-
-Execute o script
-
-python youtube_downloader.py
-
-📁 Estrutura sugerida do projeto
-youtube_downloader/
-├── youtube_downloader.py
-├── README.md
-└── requirements.txt
-
-Exemplo de requirements.txt
-yt-dlp
-
-🧩 Personalização
-
-Você pode editar as opções de download (formato, nome do arquivo, pasta de saída) dentro da função baixar_video():
+No código, você pode ajustar as opções do yt-dlp em ydl_opts_download:
 
 ydl_opts_download = {
-    "format": "bestvideo+bestaudio/best",
-    "outtmpl": "%(playlist_title|Desconhecida)s/%(playlist_index|0)03d - %(title)s.%(ext)s",
+    "noplaylist": True,              # mantém sempre vídeo único
+    "format": "mp4/bestvideo+bestaudio/best",
+    "outtmpl": "%(title)s.%(ext)s",  # nome do arquivo de saída
 }
 
-🛠️ Tecnologias
 
-Python 3.8+
+Outros templates úteis:
 
-yt-dlp – fork moderno do youtube-dl, com suporte a novos sites e formatos
+%(playlist_title|Desconhecida)s/%(playlist_index|0)03d - %(title)s.%(ext)s
+
+downloads/%(uploader)s - %(title)s.%(ext)s
+
+❗ Solução de problemas
+
+“ffmpeg not found” / áudio fora de sincronia / avisos de container
+→ Instale o FFmpeg (seção acima) e garanta que ffmpeg esteja no PATH.
+
+Windows abre a Microsoft Store ao digitar python
+→ Desative App Execution Aliases:
+Configurações → Aplicativos → Configurações avançadas de alias de execução de aplicativos
+Desative os toggles de python.exe/python3.exe.
+
+Várias versões do Python
+→ Apontar o interpretador explicitamente (ex.: C:\Users\SeuUser\AppData\Local\Programs\Python\Python3xx\python.exe)
+ou configurar o Python correto no VS Code (⌘/Ctrl+Shift+P → Python: Select Interpreter).
+
+📁 Estrutura sugerida
+youtube-downloader/
+├─ DownloadVideo.py
+├─ requirements.txt
+└─ README.md
+
+🔐 Aviso legal
+
+Este projeto destina-se a fins pessoais/educacionais.
+Respeite os termos de serviço do YouTube e os direitos autorais aplicáveis.
 
 🧾 Licença
 
-Este projeto é distribuído sob a licença MIT.
-Você pode usá-lo, modificá-lo e distribuí-lo livremente, desde que mantenha os créditos.
+Distribuído sob a MIT License.
+Sinta-se à vontade para usar, modificar e compartilhar, mantendo os créditos.
 
-💡 Dica
-
-Para evitar problemas com o Windows bloqueando o Python da Microsoft Store,
-instale o Python direto do site oficial e desative os App Execution Aliases em:
-
-Configurações → Aplicativos → Configurações avançadas de alias de execução de aplicativos
-
-✨ Autor
+✍️ Autor
 
 Kenede Lima
+Projeto pessoal de automação e aprendizado em Python.
